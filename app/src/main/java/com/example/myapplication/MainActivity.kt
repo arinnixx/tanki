@@ -9,14 +9,18 @@ import android.view.KeyEvent.KEYCODE_DPAD_RIGHT
 import android.view.KeyEvent.KEYCODE_DPAD_UP
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import androidx.core.view.marginLeft
 import androidx.core.view.marginTop
-import com.example.myapplication.Direction.UP
-import com.example.myapplication.Direction.DOWN
-import com.example.myapplication.Direction.LEFT
-import com.example.myapplication.Direction.RIGHT
+import com.example.myapplication.enums.Direction.UP
+import com.example.myapplication.enums.Direction.DOWN
+import com.example.myapplication.enums.Direction.LEFT
+import com.example.myapplication.enums.Direction.RIGHT
 import com.example.myapplication.databinding.ActivityMainBinding
+import com.example.myapplication.drawers.GridDrawer
+import com.example.myapplication.enums.Direction
 
 const val CELL_SIZE=50
 
@@ -39,8 +43,10 @@ class MainActivity : AppCompatActivity() {
     private fun switchEditMode(){
         if(editMode) {
             gridDrawer.removeGrid()
+            binding.materialsContainer.visibility= INVISIBLE
         } else {
             gridDrawer.drawGrid()
+            binding.materialsContainer.visibility= VISIBLE
         }
         editMode = !editMode
     }

@@ -1,9 +1,11 @@
-package com.example.myapplication
+package com.example.myapplication.drawers
 
 import android.content.Context
 import android.graphics.Color
 import android.view.View
 import android.widget.FrameLayout
+import com.example.myapplication.CELL_SIZE
+import com.example.myapplication.binding
 
 class GridDrawer(private val context:Context) {
 
@@ -17,7 +19,7 @@ class GridDrawer(private val context:Context) {
     }
 
     fun drawGrid(){
-        val container=binding.container
+        val container= binding.container
         drawHorizontalLines(container)
         drawVerticalLines(container)
     }
