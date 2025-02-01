@@ -3,10 +3,7 @@ package com.example.myapplication
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_DPAD_DOWN
-import android.view.KeyEvent.KEYCODE_DPAD_LEFT
-import android.view.KeyEvent.KEYCODE_DPAD_RIGHT
-import android.view.KeyEvent.KEYCODE_DPAD_UP
+import android.view.KeyEvent.*
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View.INVISIBLE
@@ -96,10 +93,11 @@ class MainActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when(keyCode)
         {
-            KEYCODE_DPAD_UP -> elementsDrawer.move(binding.myTank,UP)
-            KEYCODE_DPAD_DOWN -> elementsDrawer.move(binding.myTank,DOWN)
-            KEYCODE_DPAD_LEFT -> elementsDrawer.move(binding.myTank,LEFT)
-            KEYCODE_DPAD_RIGHT -> elementsDrawer.move(binding.myTank,RIGHT)
+            KEYCODE_DPAD_UP -> tankDrawer.move(binding.myTank,UP,elementsDrawer.elementsOnContainer)
+            KEYCODE_DPAD_DOWN -> tankDrawer.move(binding.myTank,DOWN,elementsDrawer.elementsOnContainer)
+            KEYCODE_DPAD_LEFT -> tankDrawer.move(binding.myTank,LEFT,elementsDrawer.elementsOnContainer)
+            KEYCODE_DPAD_RIGHT -> tankDrawer.move(binding.myTank,RIGHT,elementsDrawer.elementsOnContainer)
+            KEYCODE_SPACE -> bulletDrawer.drawBullet(binding.myTank,tankDrawer.currentDirection)
         }
         return super.onKeyDown(keyCode, event)
     }

@@ -10,30 +10,27 @@ import com.example.myapplication.models.Element
 
 class TankDrawer(val container:FrameLayout) {
 
+    var currentDirection = Direction.UP
+
     fun move(myTank: View, direction: Direction,elementsOnContainer:List<Element>){
         val layoutParams =myTank.layoutParams as FrameLayout.LayoutParams
         val currentCoordinate = Coordinate(layoutParams.topMargin, layoutParams.leftMargin)
+        currentDirection = direction
+        myTank.rotation=direction.rotation
         when(direction){
             Direction.UP ->{
-                myTank.rotation = 0f
                 (myTank.layoutParams as FrameLayout.LayoutParams).topMargin += -CELL_SIZE
 
             }
             Direction.DOWN ->{
-
-                myTank.rotation = 180f
                 (myTank.layoutParams as FrameLayout.LayoutParams).topMargin += CELL_SIZE
 
             }
             Direction.LEFT ->{
-
-                myTank.rotation = 270f
                 (myTank.layoutParams as FrameLayout.LayoutParams).leftMargin -= CELL_SIZE
 
             }
             Direction.RIGHT ->{
-
-                myTank.rotation = 90f
                 (myTank.layoutParams as FrameLayout.LayoutParams).leftMargin += CELL_SIZE
             }
         }
