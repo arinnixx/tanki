@@ -83,26 +83,32 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
         elementsOnContainer: MutableList<Element>,
         detectedCoordinatesList: List<Coordinate>
     ){
-        if(checkContainerContainsElements(
-                elementsOnContainer.map { it.coordinate },
-                detectedCoordinatesList
-         )
-        ){
             detectedCoordinatesList.forEach {
                 val element = getElementByCoordinates(it, elementsOnContainer)
                 removeElementsAndStopBullet(element,elementsOnContainer)
             }
-        }
-
     }
 
     private fun removeElementsAndStopBullet(
         element: Element?,
         elementsOnContainer: MutableList<Element>
     ){
+        if(element!= null){
+            if(element.material.bulletCanGoThrough){
+                return
+            }
+            if (element.material.simpleBulletCanDestroy){
+                stopBullet()
+                removeView(element)
+                elementsOnContainer.remove(element)
+            }else{
+                stopBullet()
+            }
+        }
+    }
+
+    private fun stopBullet(){
         canBulletGoFurther=false
-        removeView(element)
-        elementsOnContainer.remove(element)
     }
 
     private fun removeView(element: Element?){
@@ -115,18 +121,6 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
         }
     }
 
-
-    private fun checkContainerContainsElements(
-        elementsOnContainer: List<Coordinate>,
-        detectedCoordinatesList: List <Coordinate>
-    ):Boolean{
-        detectedCoordinatesList.forEach{
-            if (elementsOnContainer.contains(it)){
-                return true
-            }
-        }
-        return false
-    }
 
     private fun getCoordinatesForTopOrBottomDirection(bulletCoordinate: Coordinate): List <Coordinate>{
         val leftCell = bulletCoordinate.left - bulletCoordinate.left % CELL_SIZE
