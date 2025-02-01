@@ -12,6 +12,7 @@ import com.example.myapplication.enums.Direction
 import com.example.myapplication.enums.Material
 import com.example.myapplication.models.Coordinate
 import com.example.myapplication.models.Element
+import com.example.myapplication.utils.getElementByCoordinates
 import kotlin.math.E
 
 class ElementsDrawer(val container: FrameLayout) {
@@ -30,7 +31,7 @@ class ElementsDrawer(val container: FrameLayout) {
     }
 
     private fun drawOrReplaceView(coordinate: Coordinate){
-        val viewOnCoordinate = getElementByCoordinates(coordinate)
+        val viewOnCoordinate = getElementByCoordinates(coordinate, elementsOnContainer)
         if (viewOnCoordinate==null){
             drawView(coordinate)
             return
@@ -46,7 +47,7 @@ class ElementsDrawer(val container: FrameLayout) {
     }
 
     private fun eraseView(coordinate: Coordinate){
-        val elementOnCoordinate = getElementByCoordinates(coordinate)
+        val elementOnCoordinate = getElementByCoordinates(coordinate,elementsOnContainer)
         if (elementOnCoordinate != null){
             val erasingView = container.findViewById<View>(elementOnCoordinate.viewId)
             container.removeView(erasingView)
@@ -77,8 +78,7 @@ class ElementsDrawer(val container: FrameLayout) {
 
 
 
-    private fun getElementByCoordinates(coordinate: Coordinate)=
-        elementsOnContainer.firstOrNull { it.coordinate==coordinate }
+
 
 
 }

@@ -8,6 +8,7 @@ import com.example.myapplication.enums.Direction
 import com.example.myapplication.models.Coordinate
 import com.example.myapplication.models.Element
 import com.example.myapplication.utils.checkViewCanMoveThroughBorder
+import com.example.myapplication.utils.getElementByCoordinates
 
 class TankDrawer(val container:FrameLayout) {
 
@@ -76,7 +77,6 @@ class TankDrawer(val container:FrameLayout) {
         return coordinateList
     }
 
-    private fun getElementByCoordinates(coordinate: Coordinate, elementsOnContainer:List<Element>)=
-        elementsOnContainer.firstOrNull { it.coordinate==coordinate }
+
 
 }

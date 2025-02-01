@@ -8,34 +8,146 @@ import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.enums.Direction
 import com.example.myapplication.R
 import com.example.myapplication.models.Coordinate
+import com.example.myapplication.models.Element
 import com.example.myapplication.utils.checkViewCanMoveThroughBorder
+import com.example.myapplication.utils.getElementByCoordinates
 
 private const val BULLET_WIDTH = 15
 private const val BULLET_HEIGHT = 15
 
 class BulletDrawer (val container:FrameLayout){
+    private var canBulletGoFurther = true
+    private var bulletThread: Thread? = null
 
-    fun makeBulletMove(myTank: View, currentDirection: Direction){
-        Thread(Runnable{
-            val bullet = createBullet(myTank,currentDirection)
-            while (bullet.checkViewCanMoveThroughBorder(Coordinate(bullet.top,bullet.left))) {
-                when (currentDirection) {
-                    Direction.UP -> (bullet.layoutParams as FrameLayout.LayoutParams).topMargin -= BULLET_HEIGHT
-                    Direction.DOWN -> (bullet.layoutParams as FrameLayout.LayoutParams).topMargin += BULLET_HEIGHT
-                    Direction.LEFT -> (bullet.layoutParams as FrameLayout.LayoutParams).leftMargin -= BULLET_HEIGHT
-                    Direction.RIGHT -> (bullet.layoutParams as FrameLayout.LayoutParams).leftMargin += BULLET_HEIGHT
+private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.isAlive
+
+
+
+    fun makeBulletMove(
+        myTank: View,
+        currentDirection: Direction,
+        elementsOnContainer: MutableList<Element>
+    ){
+        canBulletGoFurther=true
+        if (!checkBulletThreadDlive()) {
+            bulletThread=Thread(Runnable{
+                val bullet = createBullet(myTank,currentDirection)
+                while (bullet.checkViewCanMoveThroughBorder(
+                        Coordinate(bullet.top,bullet.left)
+                    ) && canBulletGoFurther
+                ) {
+                    when (currentDirection) {
+                        Direction.UP -> (bullet.layoutParams as FrameLayout.LayoutParams).topMargin -= BULLET_HEIGHT
+                        Direction.DOWN -> (bullet.layoutParams as FrameLayout.LayoutParams).topMargin += BULLET_HEIGHT
+                        Direction.LEFT -> (bullet.layoutParams as FrameLayout.LayoutParams).leftMargin -= BULLET_HEIGHT
+                        Direction.RIGHT -> (bullet.layoutParams as FrameLayout.LayoutParams).leftMargin += BULLET_HEIGHT
+                    }
+                    Thread.sleep(30)
+                    chooseBehaviorInTermsOfDirections(
+                        elementsOnContainer,
+                        currentDirection,
+                        Coordinate(
+                            (bullet.layoutParams as FrameLayout.LayoutParams).topMargin,
+                            (bullet.layoutParams as FrameLayout.LayoutParams).leftMargin))
+                    (container.context as Activity).runOnUiThread{
+                        container.removeView(bullet)
+                        container.addView(bullet)
+                    }
+
                 }
-                Thread.sleep(30)
                 (container.context as Activity).runOnUiThread{
                     container.removeView(bullet)
-                    container.addView(bullet)
                 }
-            }
-            (container.context as Activity).runOnUiThread{
-                container.removeView(bullet)
-            }
-        }).start()
+            })
+                bulletThread!!.start()
+        }
     }
+
+    private fun chooseBehaviorInTermsOfDirections(
+        elementsOnContainer: MutableList<Element>,
+        currentDirection: Direction,
+        bulletCoordinate: Coordinate
+    ){
+        when(currentDirection){
+            Direction.DOWN, Direction.UP->{
+                compareCollections(elementsOnContainer,getCoordinatesForTopOrBottomDirection(bulletCoordinate))
+            }
+            Direction.LEFT, Direction.RIGHT->{
+                compareCollections(elementsOnContainer,getCoordinatesForLeftorrightDirection(bulletCoordinate))
+            }
+
+        }
+
+    }
+    private fun compareCollections(
+        elementsOnContainer: MutableList<Element>,
+        detectedCoordinatesList: List<Coordinate>
+    ){
+        if(checkContainerContainsElements(
+                elementsOnContainer.map { it.coordinate },
+                detectedCoordinatesList
+         )
+        ){
+            detectedCoordinatesList.forEach {
+                val element = getElementByCoordinates(it, elementsOnContainer)
+                removeElementsAndStopBullet(element,elementsOnContainer)
+            }
+        }
+
+    }
+
+    private fun removeElementsAndStopBullet(
+        element: Element?,
+        elementsOnContainer: MutableList<Element>
+    ){
+        canBulletGoFurther=false
+        removeView(element)
+        elementsOnContainer.remove(element)
+    }
+
+    private fun removeView(element: Element?){
+        val activity = container.context as Activity
+        activity.runOnUiThread{
+            if (element != null){
+                container.removeView(activity.findViewById(element.viewId))
+            }
+
+        }
+    }
+
+
+    private fun checkContainerContainsElements(
+        elementsOnContainer: List<Coordinate>,
+        detectedCoordinatesList: List <Coordinate>
+    ):Boolean{
+        detectedCoordinatesList.forEach{
+            if (elementsOnContainer.contains(it)){
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun getCoordinatesForTopOrBottomDirection(bulletCoordinate: Coordinate): List <Coordinate>{
+        val leftCell = bulletCoordinate.left - bulletCoordinate.left % CELL_SIZE
+        val rightCell = leftCell + CELL_SIZE
+        val topCoordinate = bulletCoordinate.top - bulletCoordinate.top % CELL_SIZE
+        return listOf(
+            Coordinate(topCoordinate,leftCell),
+            Coordinate(topCoordinate,rightCell)
+        )
+    }
+
+    private fun getCoordinatesForLeftorrightDirection(bulletCoordinate: Coordinate): List <Coordinate>{
+        val topCell = bulletCoordinate.top - bulletCoordinate.top % CELL_SIZE
+        val bottomCell = topCell + CELL_SIZE
+        val leftCoordinate = bulletCoordinate.left - bulletCoordinate.left % CELL_SIZE
+        return listOf(
+            Coordinate(topCell,leftCoordinate),
+            Coordinate(bottomCell,leftCoordinate)
+        )
+    }
+
 
    private  fun createBullet(myTank: View, currentDirection: Direction): ImageView {
          return ImageView(container.context)
