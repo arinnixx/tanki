@@ -12,5 +12,7 @@ fun View.checkViewCanMoveThroughBorder(coordinate: Coordinate):Boolean{
             coordinate.left + this.width <= binding.container.width
 }
 
-fun getElementByCoordinates(coordinate: Coordinate, elementsOnContainer:List<Element>)=
+fun getElementByCoordinates(coordinate: Coordinate, elementsOnContainer:List<Element>):Element?{
+
+}
     elementsOnContainer.firstOrNull { it.coordinate==coordinate }

@@ -8,4 +8,5 @@ enum class Material(val tankCanGoThrough:Boolean,
     BRICK(false,false,true),
     CONCRETE(false,false,false),
     GRASS(true,true,false),
+    EAGLE(false,false,true),
 }
