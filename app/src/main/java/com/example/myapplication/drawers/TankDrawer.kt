@@ -7,6 +7,7 @@ import com.example.myapplication.binding
 import com.example.myapplication.enums.Direction
 import com.example.myapplication.models.Coordinate
 import com.example.myapplication.models.Element
+import com.example.myapplication.utils.checkViewCanMoveThroughBorder
 
 class TankDrawer(val container:FrameLayout) {
 
@@ -36,9 +37,8 @@ class TankDrawer(val container:FrameLayout) {
         }
 
         val nextCoordinate = Coordinate(layoutParams.topMargin,layoutParams.leftMargin)
-        if (checkTankCanMoveThroughBorder(
-                nextCoordinate,
-                myTank
+        if (myTank.checkViewCanMoveThroughBorder(
+                nextCoordinate
             )&& checkTankCanMoveThroughMaterial(nextCoordinate, elementsOnContainer)
         ){
             binding.container.removeView(binding.myTank)
@@ -61,16 +61,6 @@ class TankDrawer(val container:FrameLayout) {
         return true
     }
 
-    private fun checkTankCanMoveThroughBorder(coordinate: Coordinate,myTank: View):Boolean{
-        if (coordinate.top >=0 &&
-            coordinate.top + myTank.height <= binding.container.height &&
-            coordinate.left >= 0 &&
-            coordinate.left + myTank.width <= binding.container.width
-        ){
-            return true
-        }
-        return false
-    }
 
     private fun getTankCoordinates(topLeftCoordinate:Coordinate):List<Coordinate>{
         val coordinateList= mutableListOf<Coordinate>()

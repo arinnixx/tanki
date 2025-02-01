@@ -8,9 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.FrameLayout
-import androidx.core.view.marginLeft
-import androidx.core.view.marginTop
 import com.example.myapplication.enums.Direction.UP
 import com.example.myapplication.enums.Direction.DOWN
 import com.example.myapplication.enums.Direction.LEFT
@@ -20,9 +17,7 @@ import com.example.myapplication.drawers.BulletDrawer
 import com.example.myapplication.drawers.ElementsDrawer
 import com.example.myapplication.drawers.GridDrawer
 import com.example.myapplication.drawers.TankDrawer
-import com.example.myapplication.enums.Direction
 import com.example.myapplication.enums.Material
-import com.example.myapplication.models.Coordinate
 
 const val CELL_SIZE=50
 
@@ -97,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             KEYCODE_DPAD_DOWN -> tankDrawer.move(binding.myTank,DOWN,elementsDrawer.elementsOnContainer)
             KEYCODE_DPAD_LEFT -> tankDrawer.move(binding.myTank,LEFT,elementsDrawer.elementsOnContainer)
             KEYCODE_DPAD_RIGHT -> tankDrawer.move(binding.myTank,RIGHT,elementsDrawer.elementsOnContainer)
-            KEYCODE_SPACE -> bulletDrawer.drawBullet(binding.myTank,tankDrawer.currentDirection)
+            KEYCODE_SPACE -> bulletDrawer.makeBulletMove(binding.myTank,tankDrawer.currentDirection)
         }
         return super.onKeyDown(keyCode, event)
     }
