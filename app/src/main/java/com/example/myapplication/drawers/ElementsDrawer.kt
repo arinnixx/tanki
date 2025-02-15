@@ -1,5 +1,6 @@
 package com.example.myapplication.drawers
 
+import android.app.Activity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -7,6 +8,7 @@ import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.enums.Material
 import com.example.myapplication.models.Coordinate
 import com.example.myapplication.models.Element
+import com.example.myapplication.utils.drawElement
 import com.example.myapplication.utils.getElementByCoordinates
 
 
@@ -98,28 +100,15 @@ class ElementsDrawer(val container: FrameLayout) {
 
 
 
-    private fun drawView(
-        coordinate: Coordinate,
-    ){
+    private fun drawView(coordinate: Coordinate){
         removeUnwantedInstances()
-        val view=ImageView(container.context)
-        val layoutParams=FrameLayout.LayoutParams(
-            currentMaterial.width * CELL_SIZE,
-            currentMaterial.height * CELL_SIZE
-        )
-        view.setImageResource(currentMaterial.image)
-        layoutParams.topMargin=coordinate.top
-        layoutParams.leftMargin=coordinate.left
         val element = Element(
             material = currentMaterial,
             coordinate = coordinate,
             width = currentMaterial.width,
             height = currentMaterial.height
         )
-        view.id = element.viewId
-        view.layoutParams = layoutParams
-        view.scaleType = ImageView.ScaleType.FIT_XY
-        container.addView(view)
+        element.drawElement(container)
         elementsOnContainer.add(element)
 
     }
