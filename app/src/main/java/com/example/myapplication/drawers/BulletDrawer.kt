@@ -7,8 +7,10 @@ import android.widget.ImageView
 import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.enums.Direction
 import com.example.myapplication.R
+import com.example.myapplication.enums.Material
 import com.example.myapplication.models.Coordinate
 import com.example.myapplication.models.Element
+import com.example.myapplication.models.Tank
 import com.example.myapplication.utils.checkViewCanMoveThroughBorder
 import com.example.myapplication.utils.getElementByCoordinates
 import com.example.myapplication.utils.runOnUiThread
@@ -19,20 +21,23 @@ private const val BULLET_HEIGHT = 15
 class BulletDrawer (private val container:FrameLayout){
     private var canBulletGoFurther = true
     private var bulletThread: Thread? = null
+    private lateinit var tank:Tank
 
 private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.isAlive
 
 
 
     fun makeBulletMove(
-        myTank: View,
-        currentDirection: Direction,
+        tank:Tank,
         elementsOnContainer: MutableList<Element>
     ){
         canBulletGoFurther=true
+        this.tank=tank
+        val currentDirection=tank.direction
         if (!checkBulletThreadDlive()) {
             bulletThread = Thread(Runnable{
-                val bullet = createBullet(myTank,currentDirection)
+                val view = container.findViewById<View>(this.tank.element.viewId)?:return@Runnable
+                val bullet = createBullet(view,currentDirection)
                 while (bullet.checkViewCanMoveThroughBorder(
                         Coordinate(bullet.top,bullet.left)
                     ) && canBulletGoFurther
@@ -84,8 +89,11 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
         elementsOnContainer: MutableList<Element>,
         detectedCoordinatesList: List<Coordinate>
     ){
-            detectedCoordinatesList.forEach {
-                val element = getElementByCoordinates(it, elementsOnContainer)
+            for (coordinate in detectedCoordinatesList){
+                val element= getElementByCoordinates(coordinate,elementsOnContainer)
+                if(element==tank.element){
+                    continue
+                }
                 removeElementsAndStopBullet(element,elementsOnContainer)
             }
     }
@@ -96,6 +104,10 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
     ){
         if(element!= null){
             if(element.material.bulletCanGoThrough){
+                return
+            }
+            if (tank.element.material==Material.ENEMY_TANK && element.material == Material.ENEMY_TANK){
+                stopBullet()
                 return
             }
             if (element.material.simpleBulletCanDestroy){

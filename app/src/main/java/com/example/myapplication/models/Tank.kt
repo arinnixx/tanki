@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.FrameLayout
 import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.binding
+import com.example.myapplication.drawers.BulletDrawer
 import com.example.myapplication.enums.Direction
 import com.example.myapplication.enums.Material
 import com.example.myapplication.utils.checkViewCanMoveThroughBorder
@@ -14,9 +15,10 @@ import kotlin.random.Random
 
 
 
-class Tank(
+class Tank constructor(
  val element:Element,
- var direction: Direction
+ var direction: Direction,
+ val bulletDrawer: BulletDrawer
 ) {
 
     fun move(direction: Direction,container: FrameLayout, elementsOnContainer: List<Element>){
