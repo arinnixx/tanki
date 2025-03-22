@@ -12,19 +12,18 @@ const val  KEY_LEVEL = "key_level"
 
 class LevelStorage(val context: Context) {
     private val prefs = (context as Activity).getPreferences(MODE_PRIVATE)
+    private val gson = Gson()
 
     fun saveLevel(elementsonContainer: List<Element>){
         prefs.edit()
-            .putString(KEY_LEVEL, Gson().toJson(elementsonContainer))
+            .putString(KEY_LEVEL,gson.toJson(elementsonContainer))
             .apply()
     }
 
     fun loadLevel():List<Element>?{
-        val levelFromPrefs = prefs.getString(KEY_LEVEL, null)
-        levelFromPrefs?.let {
+        val levelFromPrefs = prefs.getString(KEY_LEVEL, null) ?: return null
             val type = object : TypeToken<List<Element>>() {}.type
-            return Gson().fromJson(it,type)
-        }
-        return null
+            return Gson().fromJson(levelFromPrefs,type)
+
     }
 }
