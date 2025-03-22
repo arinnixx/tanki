@@ -11,11 +11,12 @@ import com.example.myapplication.models.Coordinate
 import com.example.myapplication.models.Element
 import com.example.myapplication.utils.checkViewCanMoveThroughBorder
 import com.example.myapplication.utils.getElementByCoordinates
+import com.example.myapplication.utils.runOnUiThread
 
 private const val BULLET_WIDTH = 15
 private const val BULLET_HEIGHT = 15
 
-class BulletDrawer (val container:FrameLayout){
+class BulletDrawer (private val container:FrameLayout){
     private var canBulletGoFurther = true
     private var bulletThread: Thread? = null
 
@@ -30,7 +31,7 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
     ){
         canBulletGoFurther=true
         if (!checkBulletThreadDlive()) {
-            bulletThread=Thread(Runnable{
+            bulletThread = Thread(Runnable{
                 val bullet = createBullet(myTank,currentDirection)
                 while (bullet.checkViewCanMoveThroughBorder(
                         Coordinate(bullet.top,bullet.left)
@@ -49,13 +50,13 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
                         Coordinate(
                             (bullet.layoutParams as FrameLayout.LayoutParams).topMargin,
                             (bullet.layoutParams as FrameLayout.LayoutParams).leftMargin))
-                    (container.context as Activity).runOnUiThread{
+                    container.runOnUiThread{
                         container.removeView(bullet)
                         container.addView(bullet)
                     }
 
                 }
-                (container.context as Activity).runOnUiThread{
+                container.runOnUiThread{
                     container.removeView(bullet)
                 }
             })
@@ -114,9 +115,7 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
     private fun removeView(element: Element?){
         val activity = container.context as Activity
         activity.runOnUiThread{
-            if (element != null){
-                container.removeView(activity.findViewById(element.viewId))
-            }
+
 
         }
     }
