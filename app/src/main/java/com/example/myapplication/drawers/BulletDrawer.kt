@@ -18,7 +18,9 @@ import com.example.myapplication.utils.runOnUiThread
 private const val BULLET_WIDTH = 15
 private const val BULLET_HEIGHT = 15
 
-class BulletDrawer (private val container:FrameLayout){
+class BulletDrawer (private val container:FrameLayout,
+private val elements:MutableList<Element>,
+val enemyDrawer: EnemyDrawer){
     private var canBulletGoFurther = true
     private var bulletThread: Thread? = null
     private lateinit var tank:Tank
@@ -28,8 +30,7 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
 
 
     fun makeBulletMove(
-        tank:Tank,
-        elementsOnContainer: MutableList<Element>
+        tank:Tank
     ){
         canBulletGoFurther=true
         this.tank=tank
@@ -50,7 +51,6 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
                     }
                     Thread.sleep(30)
                     chooseBehaviorInTermsOfDirections(
-                        elementsOnContainer,
                         currentDirection,
                         Coordinate(
                             (bullet.layoutParams as FrameLayout.LayoutParams).topMargin,
@@ -70,37 +70,34 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
     }
 
     private fun chooseBehaviorInTermsOfDirections(
-        elementsOnContainer: MutableList<Element>,
         currentDirection: Direction,
         bulletCoordinate: Coordinate
     ){
         when(currentDirection){
             Direction.DOWN, Direction.UP->{
-                compareCollections(elementsOnContainer,getCoordinatesForTopOrBottomDirection(bulletCoordinate))
+                compareCollections(getCoordinatesForTopOrBottomDirection(bulletCoordinate))
             }
             Direction.LEFT, Direction.RIGHT->{
-                compareCollections(elementsOnContainer,getCoordinatesForLeftorrightDirection(bulletCoordinate))
+                compareCollections(getCoordinatesForLeftorrightDirection(bulletCoordinate))
             }
 
         }
 
     }
     private fun compareCollections(
-        elementsOnContainer: MutableList<Element>,
         detectedCoordinatesList: List<Coordinate>
     ){
             for (coordinate in detectedCoordinatesList){
-                val element= getElementByCoordinates(coordinate,elementsOnContainer)
+                val element= getElementByCoordinates(coordinate,elements)
                 if(element==tank.element){
                     continue
                 }
-                removeElementsAndStopBullet(element,elementsOnContainer)
+                removeElementsAndStopBullet(element)
             }
     }
 
     private fun removeElementsAndStopBullet(
         element: Element?,
-        elementsOnContainer: MutableList<Element>
     ){
         if(element!= null){
             if(element.material.bulletCanGoThrough){
@@ -113,7 +110,7 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
             if (element.material.simpleBulletCanDestroy){
                 stopBullet()
                 removeView(element)
-                elementsOnContainer.remove(element)
+                elements.remove(element)
             }else{
                 stopBullet()
             }

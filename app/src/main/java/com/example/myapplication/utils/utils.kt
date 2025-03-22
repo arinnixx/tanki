@@ -36,6 +36,8 @@ fun getElementByCoordinates(
 return null
 }
 
+
+
  fun Element.drawElement(container: FrameLayout){
     val view= ImageView(container.context)
     val layoutParams= FrameLayout.LayoutParams(
