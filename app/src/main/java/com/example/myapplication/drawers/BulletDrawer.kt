@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.example.myapplication.CELL_SIZE
+import com.example.myapplication.GameCore.isPlaying
 import com.example.myapplication.enums.Direction
 import com.example.myapplication.R
 import com.example.myapplication.enums.Material
@@ -39,6 +40,9 @@ private val enemyDrawer: EnemyDrawer) {
     private fun moveAllBullets() {
         Thread(Runnable{
             while (true) {
+                if (!isPlaying()){
+                    continue
+                }
                 interactWithAllBullets()
                 Thread.sleep(30)
             }

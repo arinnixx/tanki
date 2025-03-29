@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.graphics.text.MeasuredText
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +11,9 @@ import android.view.MenuItem
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import androidx.core.content.ContextCompat
+import com.example.myapplication.GameCore.isPlaying
+import com.example.myapplication.GameCore.startOrPauseTheGame
 import com.example.myapplication.enums.Direction.UP
 import com.example.myapplication.enums.Direction.DOWN
 import com.example.myapplication.enums.Direction.LEFT
@@ -30,6 +34,7 @@ lateinit var binding: ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private var editMode = false
+    private lateinit var item:MenuItem
 
     private lateinit var playerTank:Tank
     private lateinit var eagle:Element
@@ -166,6 +171,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.settings,menu)
+        item=menu!!.findItem(R.id.menu_play)
         return true
     }
 
@@ -183,24 +189,45 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.menu_play ->{
-                startTheGame()
+                if(editMode){
+                    return true
+                }
+                startOrPauseTheGame()
+                if (GameCore.isPlaying()) {
+                    startTheGame()
+                }else{
+                    pauseTheGame()
+                }
                 true
             }
+
+
 
             else -> super.onOptionsItemSelected(item)
         }
     }
 
+    private fun pauseTheGame(){
+        item.icon=ContextCompat.getDrawable(this,R.drawable.ic_play)
+        GameCore.pauseTheGame()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pauseTheGame()
+    }
+
     private fun startTheGame(){
-        if(editMode){
-            return
-        }
+        item.icon=ContextCompat.getDrawable(this,R.drawable.ic_pause)
         enemyDrawer.startEnemyCreation()
-        enemyDrawer.moveEnemyTank()
+
     }
 
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (!isPlaying()){
+            return super.onKeyDown(keyCode, event)
+        }
         when(keyCode)
         {
             KEYCODE_DPAD_UP ->move(UP)
