@@ -5,6 +5,7 @@ import android.widget.FrameLayout
 import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.binding
 import com.example.myapplication.drawers.BulletDrawer
+import com.example.myapplication.drawers.EnemyDrawer
 import com.example.myapplication.enums.Direction
 import com.example.myapplication.enums.Material
 import com.example.myapplication.utils.*
@@ -16,14 +17,14 @@ import kotlin.random.Random
 class Tank constructor(
  val element:Element,
  var direction: Direction,
- val bulletDrawer: BulletDrawer
+ private val enemyDrawer: EnemyDrawer
 ) {
 
     fun move(direction: Direction,container: FrameLayout, elementsOnContainer: List<Element>){
         val view = container.findViewById<View>(element.viewId)?:return
 
 
-        val currentCoordinate = getTankCurrentCoordinate(view)
+        val currentCoordinate = view.getViewCoordinate()
         this.direction = direction
         view.rotation=direction.rotation
         val nextCoordinate = getTankNextCoordinate(view)
@@ -64,12 +65,7 @@ class Tank constructor(
         }
     }
 
-    private fun getTankCurrentCoordinate(tank:View): Coordinate{
-        return Coordinate(
-            (tank.layoutParams as FrameLayout.LayoutParams).topMargin,
-            (tank.layoutParams as FrameLayout.LayoutParams).leftMargin
-        )
-    }
+
 
     private fun getTankNextCoordinate(view:View): Coordinate {
         val layoutParams =view.layoutParams as FrameLayout.LayoutParams
@@ -101,7 +97,7 @@ class Tank constructor(
         for (anyCoordinate in getTankCoordinates(coordinate)){
             var element = getElementByCoordinates(anyCoordinate,elementsOnContainer)
             if (element==null){
-                element = getTankByCoordinates(anyCoordinate,bulletDrawer.enemyDrawer.tanks)
+                element = getTankByCoordinates(anyCoordinate,enemyDrawer.tanks)
             }
             if(element!= null && !element.material.tankCanGoThrough){
                 if (this==element){

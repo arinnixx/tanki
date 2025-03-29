@@ -22,6 +22,7 @@ class EnemyDrawer (private val container: FrameLayout,
     private var currentCoordinate:Coordinate
     val tanks = mutableListOf<Tank>()
     private var moveAllTanksThread:Thread?=null
+    lateinit var bulletDrawer: BulletDrawer
 
     init {
         respawnList = getRespawnList()
@@ -60,23 +61,31 @@ class EnemyDrawer (private val container: FrameLayout,
             material = ENEMY_TANK,
             coordinate = currentCoordinate
             ), DOWN,
-            BulletDrawer(container,elements,this)
+            this
         )
         enemyTank.element.drawElement(container)
         tanks.add(enemyTank)
     }
 
     fun moveEnemyTank(){
-        moveAllTanksThread = Thread( {
-                tanks.forEach {
-                    it.move(it.direction, container, elements)
-                    if(checkIfChanceBiggerThanRandom(10)){
-                        it.bulletDrawer.makeBulletMove(it)
-                    }
+        Thread({
+            while (true){
+                goThroughAllTanks()
+                Thread.sleep(400)
+            }
+        }).start()
+    }
 
+    private fun goThroughAllTanks(){
+        moveAllTanksThread=Thread({
+            tanks.forEach {
+                it.move(it.direction,container,elements)
+                if (checkIfChanceBiggerThanRandom(10)){
+                    bulletDrawer.addNewBulletForTank(it)
                 }
+            }
         })
-            moveAllTanksThread?.start()
+        moveAllTanksThread?.start()
     }
 
     fun startEnemyCreation(){
