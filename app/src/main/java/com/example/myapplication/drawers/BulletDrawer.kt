@@ -37,7 +37,7 @@ private val enemyDrawer: EnemyDrawer) {
         allBullets.firstOrNull { it.tank == this } != null
 
     private fun moveAllBullets() {
-        Thread({
+        Thread(Runnable{
             while (true) {
                 interactWithAllBullets()
                 Thread.sleep(30)
@@ -47,7 +47,7 @@ private val enemyDrawer: EnemyDrawer) {
 
 
     private fun interactWithAllBullets() {
-        allBullets.forEach { bullet ->
+        allBullets.toList().forEach { bullet ->
             val view = bullet.view
             if (bullet.canBulletGoFurther()) {
                 when (bullet.direction) {
@@ -64,7 +64,12 @@ private val enemyDrawer: EnemyDrawer) {
             } else {
                 stopBullet(bullet)
             }
+            bullet.stopIntersectingBullets()
         }
+        removeInconsistentBullets()
+    }
+
+    private fun removeInconsistentBullets(){
         val removingList=allBullets.filter { !it.canMoveFurther }
         removingList.forEach {
             stopBullet(it)
@@ -74,6 +79,21 @@ private val enemyDrawer: EnemyDrawer) {
         }
         allBullets.removeAll(removingList)
     }
+
+        private fun Bullet.stopIntersectingBullets(){
+            val bulletCoordinate=this.view.getViewCoordinate()
+            for (bulletInList in allBullets){
+                val coordinateList=bulletInList.view.getViewCoordinate()
+                if (this==bulletInList){
+                    continue
+                }
+                if (coordinateList==bulletCoordinate){
+                    stopBullet(this)
+                    stopBullet(bulletInList)
+                    return
+                }
+            }
+        }
 
 
         private fun Bullet.canBulletGoFurther() =

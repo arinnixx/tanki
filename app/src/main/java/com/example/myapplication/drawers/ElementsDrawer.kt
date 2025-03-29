@@ -33,7 +33,7 @@ class ElementsDrawer(val container: FrameLayout) {
     private fun drawOrReplaceView(coordinate: Coordinate){
         val viewOnCoordinate = getElementByCoordinates(coordinate, elementsOnContainer)
         if (viewOnCoordinate==null){
-            createElementDraView(coordinate)
+            createElementDrawView(coordinate)
             return
         }
         if (viewOnCoordinate.material != currentMaterial){
@@ -54,7 +54,7 @@ class ElementsDrawer(val container: FrameLayout) {
 
     private fun replaceView(coordinate: Coordinate){
         eraseView(coordinate)
-        createElementDraView(coordinate)
+        createElementDrawView(coordinate)
     }
 
     private fun eraseView(coordinate: Coordinate){
@@ -105,7 +105,7 @@ class ElementsDrawer(val container: FrameLayout) {
         elementsOnContainer.add(element)
     }
 
-    private fun createElementDraView(coordinate: Coordinate){
+    private fun createElementDrawView(coordinate: Coordinate){
 
         val element = Element(
             material = currentMaterial,
