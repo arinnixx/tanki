@@ -7,9 +7,7 @@ import com.example.myapplication.binding
 import com.example.myapplication.drawers.BulletDrawer
 import com.example.myapplication.enums.Direction
 import com.example.myapplication.enums.Material
-import com.example.myapplication.utils.checkViewCanMoveThroughBorder
-import com.example.myapplication.utils.getElementByCoordinates
-import com.example.myapplication.utils.runOnUiThread
+import com.example.myapplication.utils.*
 
 import kotlin.random.Random
 
@@ -34,10 +32,20 @@ class Tank constructor(
         ){
             emulateViewMoving(container,view)
             element.coordinate = nextCoordinate
+            generateRandomDirectionForEnemyTank()
         }else {
             element.coordinate = currentCoordinate
             (view.layoutParams as FrameLayout.LayoutParams).topMargin=currentCoordinate.top
             (view.layoutParams as FrameLayout.LayoutParams).leftMargin=currentCoordinate.left
+            changeDirectionForEnemyTank()
+        }
+    }
+
+    private fun generateRandomDirectionForEnemyTank(){
+        if (element.material!=Material.ENEMY_TANK){
+            return
+        }
+        if(checkIfChanceBiggerThanRandom(10)){
             changeDirectionForEnemyTank()
         }
     }
@@ -86,10 +94,15 @@ class Tank constructor(
         return Coordinate(layoutParams.topMargin,layoutParams.leftMargin)
     }
 
-    private fun Element.checkTankCanMoveThroughMaterial(coordinate: Coordinate, elementsOnContainer: List<Element>):
+    private fun Element.checkTankCanMoveThroughMaterial(
+        coordinate: Coordinate,
+        elementsOnContainer: List<Element>):
             Boolean{
         for (anyCoordinate in getTankCoordinates(coordinate)){
-            val element = getElementByCoordinates(anyCoordinate,elementsOnContainer)
+            var element = getElementByCoordinates(anyCoordinate,elementsOnContainer)
+            if (element==null){
+                element = getTankByCoordinates(anyCoordinate,bulletDrawer.enemyDrawer.tanks)
+            }
             if(element!= null && !element.material.tankCanGoThrough){
                 if (this==element){
                     continue

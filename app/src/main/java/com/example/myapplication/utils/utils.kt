@@ -8,6 +8,10 @@ import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.binding
 import com.example.myapplication.models.Coordinate
 import com.example.myapplication.models.Element
+import com.example.myapplication.models.Tank
+import kotlin.random.Random
+
+const val TOTAL_PERCENT=100
 
 fun View.checkViewCanMoveThroughBorder(coordinate: Coordinate):Boolean{
     return coordinate.top >=0 &&
@@ -37,6 +41,11 @@ return null
 }
 
 
+fun getTankByCoordinates(coordinate: Coordinate,tankList: List<Tank>):Element?{
+    return getElementByCoordinates(coordinate,tankList.map { it.element })
+}
+
+
 
  fun Element.drawElement(container: FrameLayout){
     val view= ImageView(container.context)
@@ -59,4 +68,8 @@ fun FrameLayout.runOnUiThread(block: () -> Unit){
     (this.context as Activity).runOnUiThread {
         block()
     }
+}
+
+fun checkIfChanceBiggerThanRandom(percentChance:Int):Boolean{
+    return Random.nextInt(TOTAL_PERCENT)<=percentChance
 }

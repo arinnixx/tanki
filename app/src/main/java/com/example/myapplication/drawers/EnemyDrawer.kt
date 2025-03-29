@@ -9,6 +9,7 @@ import com.example.myapplication.enums.Material.ENEMY_TANK
 import com.example.myapplication.models.Coordinate
 import com.example.myapplication.models.Element
 import com.example.myapplication.models.Tank
+import com.example.myapplication.utils.checkIfChanceBiggerThanRandom
 import com.example.myapplication.utils.drawElement
 
 
@@ -20,6 +21,7 @@ class EnemyDrawer (private val container: FrameLayout,
     private var enemyAmount = 0
     private var currentCoordinate:Coordinate
     val tanks = mutableListOf<Tank>()
+    private var moveAllTanksThread:Thread?=null
 
     init {
         respawnList = getRespawnList()
@@ -58,23 +60,23 @@ class EnemyDrawer (private val container: FrameLayout,
             material = ENEMY_TANK,
             coordinate = currentCoordinate
             ), DOWN,
-            BulletDrawer(container,elements)
+            BulletDrawer(container,elements,this)
         )
         enemyTank.element.drawElement(container)
         tanks.add(enemyTank)
     }
 
     fun moveEnemyTank(){
-        Thread(Runnable {
-            while (true){
-                removeInconsistentTanks()
+        moveAllTanksThread = Thread( {
                 tanks.forEach {
                     it.move(it.direction, container, elements)
-                    it.bulletDrawer.makeBulletMove(it)
+                    if(checkIfChanceBiggerThanRandom(10)){
+                        it.bulletDrawer.makeBulletMove(it)
+                    }
+
                 }
-                Thread.sleep(400)
-            }
-        }).start()
+        })
+            moveAllTanksThread?.start()
     }
 
     fun startEnemyCreation(){
@@ -86,19 +88,10 @@ class EnemyDrawer (private val container: FrameLayout,
         }).start()
     }
 
-    private fun removeInconsistentTanks(){
-        tanks.removeAll(getInconsistentTanks())
-    }
-
-    private fun getInconsistentTanks():List<Tank>{
-        val removingTanks= mutableListOf<Tank>()
-        val allTanksElements = elements.filter { it.material==ENEMY_TANK }
-        tanks.forEach {
-            if(!allTanksElements.contains(it.element)){
-                removingTanks.add(it)
-            }
-        }
-        return removingTanks
+    fun removeTank(tankIndex:Int){
+        if(tankIndex<0)return
+        moveAllTanksThread?.join()
+        tanks.removeAt(tankIndex)
     }
 
 }

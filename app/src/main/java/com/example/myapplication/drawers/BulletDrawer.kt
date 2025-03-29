@@ -13,6 +13,7 @@ import com.example.myapplication.models.Element
 import com.example.myapplication.models.Tank
 import com.example.myapplication.utils.checkViewCanMoveThroughBorder
 import com.example.myapplication.utils.getElementByCoordinates
+import com.example.myapplication.utils.getTankByCoordinates
 import com.example.myapplication.utils.runOnUiThread
 
 private const val BULLET_WIDTH = 15
@@ -88,7 +89,10 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
         detectedCoordinatesList: List<Coordinate>
     ){
             for (coordinate in detectedCoordinatesList){
-                val element= getElementByCoordinates(coordinate,elements)
+                var element= getElementByCoordinates(coordinate,elements)
+                if(element==null){
+                    element= getTankByCoordinates(coordinate,enemyDrawer.tanks)
+                }
                 if(element==tank.element){
                     continue
                 }
@@ -111,10 +115,17 @@ private fun checkBulletThreadDlive() = bulletThread != null && bulletThread!!.is
                 stopBullet()
                 removeView(element)
                 elements.remove(element)
+                removeTank(element)
             }else{
                 stopBullet()
             }
         }
+    }
+
+    private fun removeTank(element: Element){
+        val tanksElements=enemyDrawer.tanks.map{it.element}
+        val tankIndex = tanksElements.indexOf(element)
+        enemyDrawer.removeTank(tankIndex)
     }
 
     private fun stopBullet(){

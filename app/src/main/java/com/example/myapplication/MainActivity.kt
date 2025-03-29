@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
                 material = PLAYER_TANK,
                 coordinate = getPlayerTankCoordinate(elementWidth,elementHeight)
             ),UP,
-            BulletDrawer(binding.container,elementsDrawer.elementsOnContainer)
+            BulletDrawer(binding.container,elementsDrawer.elementsOnContainer,enemyDrawer)
         )
         return playerTank
     }
