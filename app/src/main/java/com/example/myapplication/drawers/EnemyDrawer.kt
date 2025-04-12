@@ -2,7 +2,7 @@ package com.example.myapplication.drawers
 
 import android.widget.FrameLayout
 import com.example.myapplication.CELL_SIZE
-import com.example.myapplication.GameCore.isPlaying
+import com.example.myapplication.GameCore
 import com.example.myapplication.SoundManager
 import com.example.myapplication.binding
 import com.example.myapplication.enums.CELLS_TANKS_SIZE
@@ -18,7 +18,9 @@ import com.example.myapplication.utils.drawElement
 private const val MAX_ENEMY_AMOUNT = 20
 
 class EnemyDrawer (private val container: FrameLayout,
-    private val elements: MutableList<Element>){
+    private val elements: MutableList<Element>,
+private val soundManager: SoundManager,
+private val gameCore: GameCore){
     private val respawnList: List<Coordinate>
     private var enemyAmount = 0
     private var currentCoordinate:Coordinate
@@ -72,7 +74,7 @@ class EnemyDrawer (private val container: FrameLayout,
     private fun moveEnemyTank(){
         Thread(Runnable{
             while (true){
-                if (!isPlaying()){
+                if (!gameCore.isPlaying()){
                     continue
                 }
                 goThroughAllTanks()
@@ -83,9 +85,9 @@ class EnemyDrawer (private val container: FrameLayout,
 
     private fun goThroughAllTanks(){
         if (tanks.isNotEmpty()){
-            SoundManager.tankMove()
+            soundManager.tankMove()
         }else{
-            SoundManager.tankStop()
+            soundManager.tankStop()
         }
             tanks.toList().forEach {
                 it.move(it.direction,container,elements)
@@ -103,7 +105,7 @@ class EnemyDrawer (private val container: FrameLayout,
         gameStarted=true
         Thread(Runnable{
             while (enemyAmount< MAX_ENEMY_AMOUNT){
-                if (!isPlaying()){
+                if (!gameCore.isPlaying()){
                     continue
                 }
             }
