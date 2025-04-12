@@ -3,8 +3,7 @@ package com.example.myapplication.drawers
 import android.widget.FrameLayout
 import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.GameCore
-import com.example.myapplication.SoundManager
-import com.example.myapplication.binding
+import com.example.myapplication.sounds.MainSoundPlayer
 import com.example.myapplication.enums.CELLS_TANKS_SIZE
 import com.example.myapplication.enums.Direction.DOWN
 import com.example.myapplication.enums.Material.ENEMY_TANK
@@ -18,9 +17,9 @@ import com.example.myapplication.utils.drawElement
 private const val MAX_ENEMY_AMOUNT = 20
 
 class EnemyDrawer (private val container: FrameLayout,
-    private val elements: MutableList<Element>,
-private val soundManager: SoundManager,
-private val gameCore: GameCore){
+                   private val elements: MutableList<Element>,
+                   private val mainSoundPlayer: MainSoundPlayer,
+                   private val gameCore: GameCore){
     private val respawnList: List<Coordinate>
     private var enemyAmount = 0
     private var currentCoordinate:Coordinate
@@ -85,9 +84,9 @@ private val gameCore: GameCore){
 
     private fun goThroughAllTanks(){
         if (tanks.isNotEmpty()){
-            soundManager.tankMove()
+            mainSoundPlayer.tankMove()
         }else{
-            soundManager.tankStop()
+            mainSoundPlayer.tankStop()
         }
             tanks.toList().forEach {
                 it.move(it.direction,container,elements)

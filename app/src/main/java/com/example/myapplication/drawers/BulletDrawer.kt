@@ -8,7 +8,7 @@ import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.GameCore
 import com.example.myapplication.enums.Direction
 import com.example.myapplication.R
-import com.example.myapplication.SoundManager
+import com.example.myapplication.sounds.MainSoundPlayer
 import com.example.myapplication.enums.Material
 import com.example.myapplication.models.Bullet
 import com.example.myapplication.models.Coordinate
@@ -20,10 +20,10 @@ private const val BULLET_WIDTH = 15
 private const val BULLET_HEIGHT = 15
 
 class BulletDrawer (private val container:FrameLayout,
-private val elements:MutableList<Element>,
-private val enemyDrawer: EnemyDrawer,
-private val soundManager: SoundManager,
-private val gameCore: GameCore) {
+                    private val elements:MutableList<Element>,
+                    private val enemyDrawer: EnemyDrawer,
+                    private val mainSoundPlayer: MainSoundPlayer,
+                    private val gameCore: GameCore) {
 
     init {
         moveAllBullets()
@@ -35,7 +35,7 @@ private val gameCore: GameCore) {
         val view = container.findViewById<View>(tank.element.viewId) ?: return
         if (tank.alreadyHasBullet()) return
         allBullets.add(Bullet(createBullet(view, tank.direction), tank.direction, tank))
-        soundManager.bulletShot()
+        mainSoundPlayer.bulletShot()
     }
 
     private fun Tank.alreadyHasBullet(): Boolean =
@@ -173,7 +173,7 @@ private val gameCore: GameCore) {
             val tanksElements = enemyDrawer.tanks.map { it.element }
             val tankIndex = tanksElements.indexOf(element)
             if (tankIndex<0)return
-            soundManager.BulletBurst()
+            mainSoundPlayer.BulletBurst()
             enemyDrawer.removeTank(tankIndex)
         }
 

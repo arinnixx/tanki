@@ -1,7 +1,5 @@
 package com.example.myapplication
 
-import android.content.Context
-import android.graphics.text.MeasuredText
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
@@ -25,6 +23,7 @@ import com.example.myapplication.models.Coordinate
 import com.example.myapplication.models.Element
 import com.example.myapplication.models.Tank
 import com.example.myapplication.enums.Material.EAGLE
+import com.example.myapplication.sounds.MainSoundPlayer
 
 const val CELL_SIZE=50
 
@@ -42,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             binding.container,
             elementsDrawer.elementsOnContainer,
             enemyDrawer,
-            soundManager,
+            mainSoundPlayer,
             gameCore
         )
     }
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val soundManager by lazy {
-        SoundManager(this)
+        MainSoundPlayer(this)
     }
 
     private fun createTank(elementWidth:Int,elementHeight:Int):Tank{
@@ -108,7 +107,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val enemyDrawer by lazy {
-        EnemyDrawer(binding.container,elementsDrawer.elementsOnContainer,soundManager,gameCore)
+        EnemyDrawer(binding.container,elementsDrawer.elementsOnContainer,mainSoundPlayer,gameCore)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        soundManager.loadSounds()
         supportActionBar?.title="Menu"
 
         binding.editorClear.setOnClickListener { elementsDrawer.currentMaterial=Material.EMPTY }
@@ -219,7 +218,7 @@ class MainActivity : AppCompatActivity() {
     private fun pauseTheGame(){
         item.icon=ContextCompat.getDrawable(this,R.drawable.ic_play)
         gameCore.pauseTheGame()
-        soundManager.pauseSounds()
+        mainSoundPlayer.pauseSounds()
     }
 
     override fun onPause() {
@@ -230,7 +229,7 @@ class MainActivity : AppCompatActivity() {
     private fun startTheGame(){
         item.icon=ContextCompat.getDrawable(this,R.drawable.ic_pause)
         enemyDrawer.startEnemyCreation()
-        soundManager.playIntroMusic()
+        mainSoundPlayer.playIntroMusic()
 
     }
 
@@ -259,13 +258,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onButtonPressed(direction: Direction){
-        soundManager.tankMove()
+        mainSoundPlayer.tankMove()
         playerTank.move(direction, binding.container,elementsDrawer.elementsOnContainer)
     }
 
     fun onButtonReleased(){
         if (enemyDrawer.tanks.isEmpty()){
-            soundManager.tankStop()
+            mainSoundPlayer.tankStop()
         }
 
     }
