@@ -3,6 +3,7 @@ package com.example.myapplication.drawers
 import android.widget.FrameLayout
 import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.GameCore.isPlaying
+import com.example.myapplication.SoundManager
 import com.example.myapplication.binding
 import com.example.myapplication.enums.CELLS_TANKS_SIZE
 import com.example.myapplication.enums.Direction.DOWN
@@ -81,6 +82,11 @@ class EnemyDrawer (private val container: FrameLayout,
     }
 
     private fun goThroughAllTanks(){
+        if (tanks.isNotEmpty()){
+            SoundManager.tankMove()
+        }else{
+            SoundManager.tankStop()
+        }
             tanks.toList().forEach {
                 it.move(it.direction,container,elements)
                 if (checkIfChanceBiggerThanRandom(10)){
@@ -109,7 +115,6 @@ class EnemyDrawer (private val container: FrameLayout,
     }
 
     fun removeTank(tankIndex:Int){
-        if(tankIndex<0)return
         tanks.removeAt(tankIndex)
     }
 

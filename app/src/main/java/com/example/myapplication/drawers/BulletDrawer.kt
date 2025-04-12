@@ -8,6 +8,7 @@ import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.GameCore.isPlaying
 import com.example.myapplication.enums.Direction
 import com.example.myapplication.R
+import com.example.myapplication.SoundManager
 import com.example.myapplication.enums.Material
 import com.example.myapplication.models.Bullet
 import com.example.myapplication.models.Coordinate
@@ -32,6 +33,7 @@ private val enemyDrawer: EnemyDrawer) {
         val view = container.findViewById<View>(tank.element.viewId) ?: return
         if (tank.alreadyHasBullet()) return
         allBullets.add(Bullet(createBullet(view, tank.direction), tank.direction, tank))
+        SoundManager.bulletShot()
     }
 
     private fun Tank.alreadyHasBullet(): Boolean =
@@ -161,6 +163,8 @@ private val enemyDrawer: EnemyDrawer) {
         private fun removeTank(element: Element) {
             val tanksElements = enemyDrawer.tanks.map { it.element }
             val tankIndex = tanksElements.indexOf(element)
+            if (tankIndex<0)return
+            SoundManager.BulletBurst()
             enemyDrawer.removeTank(tankIndex)
         }
 

@@ -41,6 +41,14 @@ object SoundManager {
         introMusicPlayer.start()
     }
 
+    fun pauseSounds(){
+        bulletBurstPlayer.pause()
+        bulletShotPlayer.pause()
+        introMusicPlayer.pause()
+        tankMovePlayerFirst.pause()
+        tankMovePlayerSecond.pause()
+    }
+
 
     fun bulletShot(){
         bulletShotPlayer.start()
@@ -55,8 +63,13 @@ object SoundManager {
     }
 
     fun tankStop(){
-        tankMovePlayerFirst.pause()
-        tankMovePlayerSecond.pause()
+        if (tankMovePlayerFirst.isPlaying){
+            tankMovePlayerFirst.pause()
+        }
+        if (tankMovePlayerSecond.isPlaying){
+            tankMovePlayerSecond.pause()
+        }
+
     }
 
 }
