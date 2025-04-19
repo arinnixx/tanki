@@ -3,20 +3,25 @@ package com.example.myapplication.sounds
 import android.content.Context
 import android.media.MediaPlayer
 import com.example.myapplication.R
+import com.example.myapplication.utils.ProgressIndicator
 
 
 private const val INTRO_MUSIC_INDEX = 0
 private const val BULLET_SHOT_INDEX = 1
 private const val BULLET_BURST_INDEX = 2
 private const val TANK_MOVE_INDEX = 3
+private const val SUCCESS_UPLOAD = 0
 
 
-class MainSoundPlayer(val context: Context) {
+class MainSoundPlayer(val context: Context, val progressIndicator: ProgressIndicator) {
 
     private val sounds = mutableListOf<GameSound>()
     private val soundPool=SoundPoolFactory().createSoundPool()
+    private var soundsReady = 0
+    private var allSoundsLoaded=false
 
     fun loadSounds(){
+        progressIndicator.showProgress()
         sounds.add(INTRO_MUSIC_INDEX, GameSound(
             resourceInPool = soundPool.load(context, R.raw.tanks_pre_music, 1),
             pool = soundPool
@@ -33,10 +38,20 @@ class MainSoundPlayer(val context: Context) {
             resourceInPool = soundPool.load(context, R.raw.tank_move_long, 1),
             pool = soundPool
         ))
+        soundPool.setOnLoadCompleteListener{soundPool,sampleId,status ->
+            if (sampleId == sounds[INTRO_MUSIC_INDEX].resourceInPool && status== SUCCESS_UPLOAD){
+                playIntroMusic()
+            }
+            soundsReady++
+            if (soundsReady==sounds.size){
+                progressIndicator.dismissProgress()
+                allSoundsLoaded=true
+            }
+        }
 
     }
 
-
+    fun areSoundsReady()=allSoundsLoaded
 
 
     fun playIntroMusic(){

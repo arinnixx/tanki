@@ -2,8 +2,8 @@ package com.example.myapplication.models
 
 import android.view.View
 import android.widget.FrameLayout
-import com.example.myapplication.CELL_SIZE
-import com.example.myapplication.binding
+import com.example.myapplication.activities.CELL_SIZE
+import com.example.myapplication.activities.binding
 import com.example.myapplication.drawers.BulletDrawer
 import com.example.myapplication.drawers.EnemyDrawer
 import com.example.myapplication.enums.Direction

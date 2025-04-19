@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,8 +9,7 @@ import android.view.KeyEvent
 import android.view.KeyEvent.*
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.content.ContextCompat
 import com.example.myapplication.GameCore
@@ -29,12 +29,13 @@ import com.example.myapplication.models.Element
 import com.example.myapplication.models.Tank
 import com.example.myapplication.enums.Material.EAGLE
 import com.example.myapplication.sounds.MainSoundPlayer
+import com.example.myapplication.utils.ProgressIndicator
 
 const val CELL_SIZE=50
 
 lateinit var binding: ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),ProgressIndicator {
     private var editMode = false
     private lateinit var item:MenuItem
 
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val soundManager by lazy {
-        MainSoundPlayer(this)
+        MainSoundPlayer(this, this)
     }
 
     private fun createTank(elementWidth:Int,elementHeight:Int):Tank{
@@ -115,6 +116,7 @@ class MainActivity : AppCompatActivity() {
         EnemyDrawer(binding.container,elementsDrawer.elementsOnContainer,soundManager,gameCore)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
@@ -279,6 +281,20 @@ class MainActivity : AppCompatActivity() {
         recreate()
     }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun showProgress() {
+        binding.container.visibility= INVISIBLE
+
+        binding.totalContainer.setBackgroundResource(R.color.gray)
+        binding.container.visibility= VISIBLE
+    }
+
+    override fun dismissProgress() {
+        Thread.sleep(3000L)
+        binding.container.visibility= VISIBLE
+        binding.totalContainer.setBackgroundResource(R.color.black)
+        binding.container.visibility=GONE
     }
 
 }

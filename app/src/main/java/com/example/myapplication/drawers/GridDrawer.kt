@@ -3,7 +3,7 @@ package com.example.myapplication.drawers
 import android.graphics.Color
 import android.view.View
 import android.widget.FrameLayout
-import com.example.myapplication.CELL_SIZE
+import com.example.myapplication.activities.CELL_SIZE
 
 
 class GridDrawer(private val container: FrameLayout?) {

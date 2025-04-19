@@ -4,7 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
-import com.example.myapplication.CELL_SIZE
+import com.example.myapplication.activities.CELL_SIZE
 import com.example.myapplication.enums.Material
 import com.example.myapplication.models.Coordinate
 import com.example.myapplication.models.Element
