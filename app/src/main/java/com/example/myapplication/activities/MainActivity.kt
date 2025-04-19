@@ -1,5 +1,7 @@
-package com.example.myapplication
+package com.example.myapplication.activities
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
@@ -10,6 +12,9 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.content.ContextCompat
+import com.example.myapplication.GameCore
+import com.example.myapplication.LevelStorage
+import com.example.myapplication.R
 import com.example.myapplication.enums.Direction.UP
 import com.example.myapplication.enums.Direction.DOWN
 import com.example.myapplication.enums.Direction.LEFT
@@ -41,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             binding.container,
             elementsDrawer.elementsOnContainer,
             enemyDrawer,
-            mainSoundPlayer,
+            soundManager,
             gameCore
         )
     }
@@ -107,7 +112,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val enemyDrawer by lazy {
-        EnemyDrawer(binding.container,elementsDrawer.elementsOnContainer,mainSoundPlayer,gameCore)
+        EnemyDrawer(binding.container,elementsDrawer.elementsOnContainer,soundManager,gameCore)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -218,7 +223,7 @@ class MainActivity : AppCompatActivity() {
     private fun pauseTheGame(){
         item.icon=ContextCompat.getDrawable(this,R.drawable.ic_play)
         gameCore.pauseTheGame()
-        mainSoundPlayer.pauseSounds()
+        soundManager.pauseSounds()
     }
 
     override fun onPause() {
@@ -229,7 +234,7 @@ class MainActivity : AppCompatActivity() {
     private fun startTheGame(){
         item.icon=ContextCompat.getDrawable(this,R.drawable.ic_pause)
         enemyDrawer.startEnemyCreation()
-        mainSoundPlayer.playIntroMusic()
+        soundManager.playIntroMusic()
 
     }
 
@@ -258,21 +263,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onButtonPressed(direction: Direction){
-        mainSoundPlayer.tankMove()
+        soundManager.tankMove()
         playerTank.move(direction, binding.container,elementsDrawer.elementsOnContainer)
     }
 
     fun onButtonReleased(){
         if (enemyDrawer.tanks.isEmpty()){
-            mainSoundPlayer.tankStop()
+            soundManager.tankStop()
         }
 
     }
 
-
-
-
-
-
+    override fun onActivityResult(requestCode:Int,resultCode:Int,data: Intent?){
+    if(resultCode== Activity.RESULT_OK&&requestCode== SCORE_REQUEST_CODE){
+        recreate()
+    }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 
 }

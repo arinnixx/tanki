@@ -1,8 +1,8 @@
 package com.example.myapplication.drawers
 
 import android.widget.FrameLayout
-import com.example.myapplication.CELL_SIZE
 import com.example.myapplication.GameCore
+import com.example.myapplication.activities.CELL_SIZE
 import com.example.myapplication.sounds.MainSoundPlayer
 import com.example.myapplication.enums.CELLS_TANKS_SIZE
 import com.example.myapplication.enums.Direction.DOWN
@@ -115,8 +115,17 @@ class EnemyDrawer (private val container: FrameLayout,
         moveEnemyTank()
     }
 
+    fun isAllTanksDestroyed():Boolean{
+        return enemyAmount== MAX_ENEMY_AMOUNT&&tanks.toList().isEmpty()
+    }
+
+    fun getPlayerScore()=enemyAmount*100
+
     fun removeTank(tankIndex:Int){
         tanks.removeAt(tankIndex)
+        if (isAllTanksDestroyed()){
+            gameCore.playerWon(getPlayerScore())
+        }
     }
 
 }
